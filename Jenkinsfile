@@ -27,15 +27,4 @@ pipeline {
             }
         }
     }
-
-    post {
-        always {
-            script {
-                echo "Cleaning up old Docker containers and images"
-                sh """
-                    docker-compose down || true
-                """
-            }
-        }
-    }
 }
