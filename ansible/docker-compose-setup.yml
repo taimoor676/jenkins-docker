@@ -1,0 +1,26 @@
+---
+- name: Install Docker Compose
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Ensure curl is installed
+      apt:
+        name: curl
+        state: present
+        update_cache: yes
+
+    - name: Download Docker Compose binary
+      get_url:
+        url: "https://github.com/docker/compose/releases/latest/download/docker-compose-{{ ansible_system }}-{{ ansible_architecture }}"
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: Verify Docker Compose installation
+      shell: docker-compose --version
+      register: result
+      ignore_errors: true
+
+    - name: Debug Docker Compose version
+      debug:
+        msg: "{{ result.stdout }}"
