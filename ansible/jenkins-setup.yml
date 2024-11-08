@@ -1,0 +1,57 @@
+---
+- name: Install Jenkins on Ubuntu
+  hosts: all
+  become: true
+  tasks:
+    - name: Update APT packages
+      apt:
+        update_cache: yes
+
+    - name: Install Java (required for Jenkins)
+      apt:
+        name: openjdk-17-jre
+        state: present
+
+    - name: Add Jenkins repository key
+      apt_key:
+        url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+        state: present
+
+    - name: Add Jenkins repository
+      apt_repository:
+        repo: "deb http://pkg.jenkins.io/debian-stable binary/"
+        state: present
+
+    - name: Install Jenkins
+      apt:
+        name: jenkins
+        state: present
+
+    - name: Start and enable Jenkins service
+      service:
+        name: jenkins
+        state: started
+        enabled: true
+
+    - name: Create SSH directory for Jenkins user
+      file:
+        path: /var/lib/jenkins/.ssh
+        state: directory
+        owner: jenkins
+        group: jenkins
+        mode: '0700'
+
+    - name: Add GitHub to known_hosts for Jenkins user
+      shell: |
+        ssh-keyscan -t ed25519 github.com >> /var/lib/jenkins/.ssh/known_hosts
+      args:
+        executable: /bin/bash
+      become: true
+
+    - name: Set correct permissions for known_hosts
+      file:
+        path: /var/lib/jenkins/.ssh/known_hosts
+        state: file
+        owner: jenkins
+        group: jenkins
+        mode: '0600'
