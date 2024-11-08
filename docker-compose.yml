@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  flask-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"  # Maps container's port 8081 to host's port 8081
+    environment:
+      - FLASK_ENV=production  # Set Flask environment (optional)
+    container_name: flask-app
