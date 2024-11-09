@@ -21,7 +21,7 @@ pipeline {
                     echo "Running Docker Compose"
                     sh """
                          docker-compose down || true
-                         sudo docker-compose up --build -d
+                          docker-compose up --build -d
                     """
                 }
             }
